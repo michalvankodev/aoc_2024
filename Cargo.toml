@@ -40,12 +40,9 @@ name = "day6part2"
 path = "src/day6/part2.rs"
 
 [[bin]]
-name = "day6steal"
-path = "src/day6/steal.rs"
-
-[[bin]]
-name = "day6diff"
-path = "src/day6/diff.rs"
+name = "day7"
+path = "src/day7/main.rs"
 
 [dependencies]
 anyhow = "1.0.93"
+itertools = "0.13.0"

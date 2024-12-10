@@ -1,6 +1,7 @@
 use std::{
     fs::File,
     io::{self, BufRead},
+    ops::{Add, Mul},
     path::{Path, PathBuf},
 };
 
@@ -9,28 +10,31 @@ fn main() -> Result<(), anyhow::Error> {
 
     let input_path = PathBuf::from(input_path_str);
 
-    let mut first_row: Vec<u32> = vec![];
-    let mut second_row: Vec<u32> = vec![];
+    let add: fn(u32, u32) -> u32 = Add::add;
+    let mul: fn(u32, u32) -> u32 = Mul::mul;
+    let operators = [add, mul];
+    let mut sum: u32 = 0;
 
     for line in read_lines(input_path)?.map_while(Result::ok) {
         if line.is_empty() {
             break;
         }
-        let mut split = line.split_whitespace();
-        first_row.push(split.next().unwrap().parse::<u32>().unwrap());
-        second_row.push(split.next().unwrap().parse::<u32>().unwrap());
+        let mut split = line.split(':');
+        let result = split.next().unwrap().parse::<u32>().unwrap();
+
+        let numbers = split
+            .next()
+            .unwrap()
+            .split_whitespace()
+            .map(|str| str.parse::<u32>().unwrap());
+        let numbers_len = numbers.count();
+
+        let operator_combinations = operators.iter().cartesian_product();
+
+        let sum: u32 = numbers.reduce(|acc, number| add(acc, number)).unwrap();
     }
 
-    first_row.sort();
-    second_row.sort();
-
-    let results: u32 = first_row
-        .iter()
-        .zip(second_row)
-        .map(|(first, second)| first.abs_diff(second))
-        .sum();
-
-    println!("{results}");
+    println!("sum: {sum}");
 
     Ok(())
 }
